@@ -7,11 +7,20 @@ const router = express.Router();
 
 module.exports = router;
 /** 查询购物车列表 */
-router.get("/items", async (req, res) => {
-    let uid = ObjectId(req.cookies.token as string);
-    let items = await CartUtil.getCartList(uid);
-    res.json(items);
-    res.end();
+router.post("/getCartList", async (req, res) => {
+    let uid = req.cookies.token as string;
+    try {
+        let items = await CartUtil.getCartList(uid);
+        res.json(items);
+        res.end();
+    }
+    catch(e){
+        res.json({
+            isSucc:false,
+            errMsg:e.message
+        })
+    }
+    
 })
 
 /** 添加商品到购物车 */

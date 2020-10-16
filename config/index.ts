@@ -1,3 +1,3 @@
 export const config = {
-    mongoUrl:'mongodb://localhost:27017/TLMall',
+    mongoUrl:'mongodb://47.103.194.217:27017/TLMall',
 }
