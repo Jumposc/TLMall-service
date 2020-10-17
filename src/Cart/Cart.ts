@@ -14,45 +14,30 @@ router.post("/getCartList", async (req, res) => {
         res.json(items);
         res.end();
     }
-    catch(e){
+    catch (e) {
         res.json({
-            isSucc:false,
-            errMsg:e.message
+            isSucc: false,
+            errMsg: e.message
         })
     }
-    
+
 })
 
-/** 添加商品到购物车 */
-router.post("/add", async (req, res) => {
-    let productId = req.body.productId as string;
-    let uid = ObjectId(req.cookies.token as string);
+/** 覆盖设置购物车 */
+router.post("/set", async (req, res) => {
+    let uid = req.cookies.token as string;
+    let body = req.body
     try {
-        await Database.db.collection('cart').findOneAndUpdate({ "uid": uid }, { "$push": { "productIds": ObjectId(productId) } })
-        let newCart = await CartUtil.getCartList(uid);
-        res.json(newCart)
+        let resSet = await CartUtil.SetCartList(uid, body);
+        res.json(resSet)
         res.end()
     }
     catch (e) {
         console.error(e)
-        res.json({ errMsg: "添加失败" })
-        res.end()
-    }
-})
-
-/** 从购物车删除商品 */
-router.post("/delete", async (req, res) => {
-    let uid = ObjectId(req.cookies.token as string);
-    let productIds = req.body.productIds.map((v: string) => ObjectId(v));
-    try {
-        await Database.db.collection<DbCart>('cart').findOneAndUpdate({ "uid": uid }, { "$pull": { "productIds": { "$in": productIds } } })
-        let newCart = await CartUtil.getCartList(uid);
-        res.json(newCart)
-        res.end()
-    }
-    catch (e) {
-        console.error(e)
-        res.json({ errMsg: "删除失败" })
+        res.json({
+            isSucc: false,
+            errMsg: "添加失败"
+        })
         res.end()
     }
 })

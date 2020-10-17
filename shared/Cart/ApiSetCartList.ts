@@ -1,7 +1,7 @@
-import { ProductData } from '../../src/models/ProductUtil';
 import { BaseReq, BaseRes } from '../Base/BaseInterface';
+import { ProductData } from '../product/Product';
 
-export interface ReqSetCartList {
+export interface ReqSetCartList extends BaseReq{
     products:
     {
         id: string,

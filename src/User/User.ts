@@ -7,7 +7,7 @@ module.exports = router;
 router.post('/login',async (req,res)=>{
     let username = req.body.username as string;
     let password = req.body.password as string;
-    let user = await Database.db.collection('user').findOne({username:username})
+    let user = await Database.db.collection('User').findOne({username:username})
     if(user && user.password === password){
         res.cookie("token",user._id)
         res.end();

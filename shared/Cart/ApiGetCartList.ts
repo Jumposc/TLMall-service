@@ -1,7 +1,7 @@
 import { BaseReq, BaseRes } from '../Base/BaseInterface';
 import { ProductData } from '../product/Product';
 
-export interface ReqGetCartList {
+export interface ReqGetCartList extends BaseReq{
 }
 
 export interface ResGetCartList extends BaseRes {

@@ -1,5 +1,5 @@
 import { ResGetCartList } from "../../shared/Cart/ApiGetCartList";
-import { ReqUpdateCartList } from "../../shared/Cart/ApiUpdateCartList";
+import { ReqSetCartList, ResSetCartList } from "../../shared/Cart/ApiSetCartList";
 import { ProductData } from "../../shared/product/Product";
 import { Database } from "../Database/DataBase";
 import { DbCart } from "../Database/dbitems/DbCart";
@@ -9,13 +9,13 @@ let ObjectId = require('mongodb').ObjectId
 export class CartUtil {
 
     static async getCartList(uid: string): Promise<ResGetCartList> {
-        let cart = await Database.db.collection<DbCart>('cart').findOne({ uid: ObjectId(uid) })
+        let cart = await Database.db.collection<DbCart>('Cart').findOne({ uid: ObjectId(uid) })
 
         if (!cart) {
             throw new Error('没有该用户购物车记录')
         }
         let productIds = cart.products.map(v => v.id);
-        let products: ProductData[] = (await Database.db.collection<DbProduct>('product').find({ _id: { $in: productIds } })
+        let products: ProductData[] = (await Database.db.collection<DbProduct>('Product').find({ _id: { $in: productIds } })
             .toArray())
             .map(v => ({
                 ...v,
@@ -36,7 +36,16 @@ export class CartUtil {
         }
     }
 
-    static async updateCartList(uid: string, cartItem: ReqUpdateCartList) {
-
+    static async SetCartList(uid: string, cartItem: ReqSetCartList):Promise<ResSetCartList> {
+        await Database.db.collection<DbCart>('Cart').findOneAndUpdate({uid:uid},{
+            $set:{
+                products:cartItem.products
+            }
+        },{upsert:true})
+        let cart = await this.getCartList(uid)
+        return {
+            isSucc:true,
+            list:cart.list
+        }
     }
 }
