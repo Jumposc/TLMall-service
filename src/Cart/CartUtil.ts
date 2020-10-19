@@ -9,7 +9,7 @@ let ObjectId = require('mongodb').ObjectId
 export class CartUtil {
 
     static async getCartList(uid: string): Promise<ResGetCartList> {
-        let cart = await Database.db.collection<DbCart>('Cart').findOne({ uid: ObjectId(uid) })
+        let cart = await Database.db.collection<DbCart>('Cart').findOne({ uid: uid })
 
         if (!cart) {
             throw new Error('没有该用户购物车记录')
@@ -36,16 +36,16 @@ export class CartUtil {
         }
     }
 
-    static async SetCartList(uid: string, cartItem: ReqSetCartList):Promise<ResSetCartList> {
-        await Database.db.collection<DbCart>('Cart').findOneAndUpdate({uid:uid},{
-            $set:{
-                products:cartItem.products
+    static async SetCartList(uid: string, cartItem: ReqSetCartList): Promise<ResSetCartList> {
+        await Database.db.collection<DbCart>('Cart').findOneAndUpdate({ uid: uid }, {
+            $set: {
+                products: cartItem.products
             }
-        },{upsert:true})
+        }, { upsert: true })
         let cart = await this.getCartList(uid)
         return {
-            isSucc:true,
-            list:cart.list
+            isSucc: true,
+            list: cart.list
         }
     }
 }
