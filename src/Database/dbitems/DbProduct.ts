@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
-import { ProductDetail, ProductAttributeData } from "../../../shared/product/Product";
+import { ProductDetail, ProductAttributeData } from "../../../shared/Product/Product";
 
-export interface DbProduct{
+export interface DbProduct {
     _id: string
     name: string,
     imageUrl: string,

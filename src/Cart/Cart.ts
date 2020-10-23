@@ -28,7 +28,7 @@ router.post("/set", async (req, res) => {
     let uid = req.cookies.token as string;
     let body = req.body
     try {
-        let resSet = await CartUtil.SetCartList(uid, body);
+        let resSet = await CartUtil.setCartList(uid, body);
         res.json(resSet)
         res.end()
     }

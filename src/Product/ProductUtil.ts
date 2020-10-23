@@ -1,11 +1,11 @@
 import { Db } from "mongodb";
-import { ReqAddProduct, ResAddProduct } from "../../shared/product/ApiAddProduct";
-import { ReqAddProductCollect, ResAddProductCollect } from "../../shared/product/ApiAddProductCollect";
-import { ReqGetProductCommentList, ResGetProductCommentList } from "../../shared/product/ApiGetProductCommentList";
-import { ReqGetProductList, ResGetProductList } from "../../shared/product/ApiGetProductList";
-import { ReqGetProductOne, ResGetProductOne } from "../../shared/product/ApiGetProductOne";
-import { ReqGetProductSimpleInfos, ResGetProductSimpleInfos } from "../../shared/product/ApiGetProductSimpleInfos";
-import { ProductData, ProductSimpleInfo } from "../../shared/product/Product";
+import { ReqAddProduct, ResAddProduct } from "../../shared/Product/ApiAddProduct";
+import { ReqAddProductCollect, ResAddProductCollect } from "../../shared/Product/ApiAddProductCollect";
+import { ReqGetProductCommentList, ResGetProductCommentList } from "../../shared/Product/ApiGetProductCommentList";
+import { ReqGetProductList, ResGetProductList } from "../../shared/Product/ApiGetProductList";
+import { ReqGetProductOne, ResGetProductOne } from "../../shared/Product/ApiGetProductOne";
+import { ReqGetProductSimpleInfos, ResGetProductSimpleInfos } from "../../shared/Product/ApiGetProductSimpleInfos";
+import { ProductData, ProductSimpleInfo } from "../../shared/Product/Product";
 import { Database } from "../Database/DataBase";
 import { DbProduct } from "../Database/dbitems/dbProduct";
 import { DbCollect } from "../Database/dbitems/DbProductCollect";

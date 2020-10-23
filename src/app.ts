@@ -5,6 +5,7 @@ import cookieParser = require('cookie-parser')
 const User = require('./User/User')
 const Cart = require('./Cart/Cart')
 const Product = require('./Product/Product')
+const Order = require('./Order/Order')
 const app = express();
 
 const port = 8080;
@@ -18,6 +19,7 @@ app.use(bodyParser.urlencoded());
 app.use(bodyParser.json());
 app.use(cookieParser());
 
-app.use('/User',User);
-app.use('/cart',Cart);
-app.use('/product',Product)
+app.use('/user', User);
+app.use('/cart', Cart);
+app.use('/product', Product)
+app.use('/order', Order)

@@ -1,6 +1,6 @@
 import { ResGetCartList } from "../../shared/Cart/ApiGetCartList";
 import { ReqSetCartList, ResSetCartList } from "../../shared/Cart/ApiSetCartList";
-import { ProductData } from "../../shared/product/Product";
+import { ProductData } from "../../shared/Product/Product";
 import { Database } from "../Database/DataBase";
 import { DbCart } from "../Database/dbitems/DbCart";
 import { DbProduct } from "../Database/dbitems/dbProduct";
@@ -36,7 +36,7 @@ export class CartUtil {
         }
     }
 
-    static async SetCartList(uid: string, cartItem: ReqSetCartList): Promise<ResSetCartList> {
+    static async setCartList(uid: string, cartItem: ReqSetCartList): Promise<ResSetCartList> {
         await Database.db.collection<DbCart>('Cart').findOneAndUpdate({ uid: uid }, {
             $set: {
                 products: cartItem.products

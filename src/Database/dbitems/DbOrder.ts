@@ -6,13 +6,14 @@ export interface DbOrder {
         name: string,
         imageUrl: string,
         // 单价
+        freight: number,
         price: number,
         amount: number
     }[],
     status: '待付款' | '待发货' | '待收货' | '待评价' | '已完成' | '交易关闭',
     price: {
-        products: number,
-        ship: number,
+        originalCost: number,
+        freight: number,
         discount: number,
         total: number
     },
