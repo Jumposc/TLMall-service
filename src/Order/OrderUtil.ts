@@ -4,6 +4,7 @@ import { ReqAddOrderComment, ResAddOrderComment } from '../../shared/order/ApiAd
 import { ReqCancelOrder, ResCancelOrder } from '../../shared/order/ApiCancelOrder';
 import { ReqGetOrderList, ResGetOrderList } from '../../shared/order/ApiGetOrderList';
 import { ReqPayOrder, ResPayOrder } from '../../shared/order/ApiPayOrder';
+import { OrderItem } from '../../shared/order/Order';
 import { ProductData } from '../../shared/product/Product';
 import { Database } from "../Database/DataBase";
 import { DbOrder } from '../Database/dbitems/DbOrder';
@@ -40,12 +41,13 @@ export class OrderUtil {
                 name: v.name,
                 imageUrl: v.imageUrl,
                 price: v.detail.price,
-                amount: v.amount
+                amount: v.amount,
+                freight:v.detail.freight
             })),
             status: '待付款',
             price: {
-                products: priceOfproducts,
-                ship: ship,
+                originalCost: priceOfproducts,
+                freight: ship,
                 discount: 0,
                 total: priceOfproducts + ship
             },
@@ -55,10 +57,7 @@ export class OrderUtil {
         let id = (await Database.db.collection<Omit<DbOrder, "_id">>('Order').insertOne(order)).insertedId.toHexString()
         return {
             isSucc: true,
-            data: {
-                ...order,
-                id: id
-            }
+            id: id
         }
 
     }
@@ -97,14 +96,14 @@ export class OrderUtil {
     }
 
     static async getOrderList(req: ReqGetOrderList): Promise<ApiRes<ResGetOrderList>> {
-        let orderList = (await this.getOrderListByStatus(req.status, req.token))
+        let orderList: OrderItem[] = (await this.getOrderListByStatus(req.status, req.token))
             .map(v => ({
                 ...v,
                 id: v._id,
                 _id: undefined
             }))
         if (req.lastId) {
-            let lastIndex = orderList.find((v) => v._id === req.lastId);
+            let lastIndex = orderList.find((v) => v.id === req.lastId);
             if (lastIndex === undefined) {
                 return {
                     isSucc: true,
@@ -141,15 +140,15 @@ export class OrderUtil {
     }
 
     static async pay(req: ReqPayOrder): Promise<ApiRes<ResPayOrder>> {
-        let order = await Database.db.collection<DbOrder>('Order').findOne({_id:ObjectId(req.orderId)})
-        if(order && order.status === '待付款'){
+        let order = await Database.db.collection<DbOrder>('Order').findOne({ _id: ObjectId(req.orderId) })
+        if (order && order.status === '待付款') {
             //支付流程完成后
-            await Database.db.collection<DbOrder>('Order').findOneAndUpdate({_id:ObjectId(req.orderId)},{$set:{status:'待发货'}})
+            await Database.db.collection<DbOrder>('Order').findOneAndUpdate({ _id: ObjectId(req.orderId) }, { $set: { status: '待发货' } })
             return {
-                isSucc:true
+                isSucc: true
             }
         }
-        else{
+        else {
             throw new Error('订单不存在或已经支付')
         }
     }

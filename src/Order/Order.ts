@@ -4,21 +4,21 @@ const router = express.Router();
 
 module.exports = router;
 
-/** Ìí¼Ó¶©µ¥ */
-router.post("/addOrder", async (req, res) => {
-    let uid = req.cookies.token as string;
-    let body = req.body
-    try {
-        let resAdd = await OrderUtil.addOrder(uid, body);
-        res.json(resAdd)
-        res.end()
-    }
-    catch (e) {
-        console.error(e)
-        res.json({
-            isSucc: false,
-            errMsg: "Ìí¼ÓÊ§°Ü"
-        })
-        res.end()
-    }
-})
+/** ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ */
+// router.post("/addOrder", async (req, res) => {
+//     let uid = req.cookies.token as string;
+//     let body = req.body
+//     try {
+//         let resAdd = await OrderUtil.addOrder(uid, body);
+//         res.json(resAdd)
+//         res.end()
+//     }
+//     catch (e) {
+//         console.error(e)
+//         res.json({
+//             isSucc: false,
+//             errMsg: "ï¿½ï¿½ï¿½ï¿½Ê§ï¿½ï¿½"
+//         })
+//         res.end()
+//     }
+// })

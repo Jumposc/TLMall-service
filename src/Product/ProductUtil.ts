@@ -1,4 +1,5 @@
 import { Db } from "mongodb";
+import { ApiRes } from "../../shared/ApiRes/ApiRes";
 import { ReqAddProduct, ResAddProduct } from "../../shared/Product/ApiAddProduct";
 import { ReqAddProductCollect, ResAddProductCollect } from "../../shared/Product/ApiAddProductCollect";
 import { ReqGetProductCommentList, ResGetProductCommentList } from "../../shared/Product/ApiGetProductCommentList";

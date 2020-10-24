@@ -4,8 +4,10 @@ import { Database } from './Database/DataBase';
 import cookieParser = require('cookie-parser')
 const User = require('./User/User')
 const Cart = require('./Cart/Cart')
-const Product = require('./Product/Product')const Discover = require('./Discover/Discover')
-const Order = require('./Order/Order')const app = express();
+const Product = require('./Product/Product')
+const Discover = require('./Discover/Discover')
+const Order = require('./Order/Order')
+const app = express();
 
 const port = 8080;
 const hostname = '127.0.0.1';
@@ -22,4 +24,4 @@ app.use('/user', User);
 app.use('/cart', Cart);
 app.use('/product', Product)
 app.use('/order', Order)
-app.use('/discover',Discover
+app.use('/discover',Discover)

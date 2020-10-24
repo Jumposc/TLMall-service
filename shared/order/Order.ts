@@ -11,8 +11,8 @@ export interface OrderItem {
     }[],
     status: '待付款' | '待发货' | '待收货' | '待评价' | '已完成' | '交易关闭',
     price: {
-        products: number,
-        ship: number,
+        originalCost: number,
+        freight: number,
         discount: number,
         total: number
     },

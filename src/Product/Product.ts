@@ -81,7 +81,6 @@ router.post('/comment', async (req, res) => {
 
 /** 添加一个商品 */
 router.post('/add', async (req, res) => {
-    try{
     try {
         res.json(await ProductUitl.addProduct(req.body))
         res.end()
