@@ -5,7 +5,8 @@ export interface ReqAddProduct extends BaseReq{
     name: string,
     imageUrl: string,
     detail: ProductDetail,
-    attribute: ProductAttributeData
+    attribute: ProductAttributeData,
+    inventory:number
 }
 
 export interface ResAddProduct extends BaseRes{

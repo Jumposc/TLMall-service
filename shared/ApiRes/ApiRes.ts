@@ -1,1 +1,1 @@
-type ApiRes<T> = (T & { isSucc: true }) | { errMsg: string } & { isSucc: false } 
+export type ApiRes<T> = (T & { isSucc: true }) | { errMsg: string } & { isSucc: false } 

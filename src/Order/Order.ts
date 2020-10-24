@@ -4,7 +4,7 @@ const router = express.Router();
 
 module.exports = router;
 
-/** Ê∑ªÂä†ËÆ¢Âçï */
+/** ÃÌº”∂©µ• */
 router.post("/addOrder", async (req, res) => {
     let uid = req.cookies.token as string;
     let body = req.body
@@ -17,7 +17,7 @@ router.post("/addOrder", async (req, res) => {
         console.error(e)
         res.json({
             isSucc: false,
-            errMsg: "Ê∑ªÂä†Â§±Ë¥•"
+            errMsg: "ÃÌº” ß∞‹"
         })
         res.end()
     }

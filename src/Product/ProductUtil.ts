@@ -5,8 +5,7 @@ import { ReqGetProductCommentList, ResGetProductCommentList } from "../../shared
 import { ReqGetProductList, ResGetProductList } from "../../shared/Product/ApiGetProductList";
 import { ReqGetProductOne, ResGetProductOne } from "../../shared/Product/ApiGetProductOne";
 import { ReqGetProductSimpleInfos, ResGetProductSimpleInfos } from "../../shared/Product/ApiGetProductSimpleInfos";
-import { ProductData, ProductSimpleInfo } from "../../shared/Product/Product";
-import { Database } from "../Database/DataBase";
+import { ProductData, ProductSimpleInfo } from "../../shared/Product/Product";import { Database } from "../Database/DataBase";
 import { DbProduct } from "../Database/dbitems/dbProduct";
 import { DbCollect } from "../Database/dbitems/DbProductCollect";
 import { DbProductComment } from "../Database/dbitems/DbProductComment";
@@ -14,7 +13,8 @@ let ObjectId = require('mongodb').ObjectId
 
 export class ProductUitl {
 
-    static async getProductList(req: ReqGetProductList): Promise<ResGetProductList> {
+
+    static async getProductList(req: ReqGetProductList): Promise<ApiRes<ResGetProductList>> {
         if (req.lastId) {
             let list: ProductData[] = (await Database.db.collection<DbProduct>('Product').find({ _id: { $gt: req.lastId } })
                 .sort({ sortField: 1, _id: -1 })
@@ -50,17 +50,39 @@ export class ProductUitl {
             }
         }
     }
+    static async getProductListById(productIds: string[]): Promise<ProductData[]> {
+        let list: ProductData[] = (await Database.db.collection<DbProduct>('Product').find({ _id: { $in: productIds.map(v => ObjectId(v))} })
+            .toArray())
+            .map(v => (
+                {
+                    ...v,
+                    _id: undefined,
+                    id: v._id
+                }
+            ))
+        return list
+    }
 
-    static async addProduct(req: ReqAddProduct): Promise<ResAddProduct> {
-        let id = (await Database.db.collection<Omit<DbProduct, '_id'>>('Product').insertOne(req)).insertedId;
+
+    static async addProduct(req: ReqAddProduct): Promise<ApiRes<ResAddProduct>> {
+        let id = (await Database.db.collection<Omit<DbProduct, '_id'>>('Product')
+        .insertOne({
+            name:req.name,
+            imageUrl:req.imageUrl,
+            detail:req.detail,
+            attribute:req.attribute,
+            inventory:req.inventory
+        })).insertedId;
         return {
-            isSucc: false,
+
+            isSucc: true,
             id: id.toHexString()
         }
     }
 
-    static async getProduct(req: ReqGetProductOne): Promise<ResGetProductOne> {
-        let product = await Database.db.collection<DbProduct>('Product').findOne({ _id: req.productId });
+
+    static async getProduct(req: ReqGetProductOne): Promise<ApiRes<ResGetProductOne>> {
+        let product = await Database.db.collection<DbProduct>('Product').findOne({ _id: ObjectId(req.productId) });
         if (!product) {
             throw new Error('没有该商品')
         }
@@ -73,7 +95,8 @@ export class ProductUitl {
         }
     }
 
-    static async getSimpleInfos(req: ReqGetProductSimpleInfos): Promise<ResGetProductSimpleInfos> {
+
+    static async getSimpleInfos(req: ReqGetProductSimpleInfos): Promise<ApiRes<ResGetProductSimpleInfos>> {
         let productIds = req.productIds.map((v: string) => ObjectId(v));
         let resProductSimpleInfos: ProductSimpleInfo[] = (await Database.db.collection<DbProduct>("product").find({ "_id": { "$in": productIds } })
             .toArray())
@@ -87,22 +110,25 @@ export class ProductUitl {
             list: resProductSimpleInfos
         }
     }
-    static async addProductCollect(req: ReqAddProductCollect): Promise<ResAddProductCollect> {
+
+    static async addProductCollect(req: ReqAddProductCollect): Promise<ApiRes<ResAddProductCollect>> {
         await Database.db.collection<DbCollect>('Collect').findOneAndUpdate({ uid: req.token }, {
             $set: {
                 $addToSet: { products: req.productId }
             }
-        })
+        
+        }, { upsert: true })
         return {
             isSucc: true
         }
     }
 
-    static async getProductCommentList(req: ReqGetProductCommentList): Promise<ResGetProductCommentList> {
+
+    static async getProductCommentList(req: ReqGetProductCommentList): Promise<ApiRes<ResGetProductCommentList>> {
         let pageSize = req.pageSize
         let lastId = req.lastId;
         let productId = ObjectId(req.productId);
-        let list = await Database.db.collection<DbProductComment>("comment").find({ "productId": productId }).toArray();
+        let list = await Database.db.collection<DbProductComment>("ProductComment").find({ "productId": productId }).toArray();
         if (lastId) {
             let lastIndex = list.findIndex(v => v._id === lastId);
             let resList = list.slice(lastIndex, lastIndex + pageSize).map((v) => ({

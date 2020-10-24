@@ -11,6 +11,7 @@ export interface ProductData {
     imageUrl: string,
     detail: ProductDetail,
     attribute: ProductAttributeData
+    inventory:number
 }
 /** 商品详细描述 */
 export interface ProductDetail {

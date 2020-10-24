@@ -1,1 +1,3 @@
-type ApiReq<T> = Omit<T,"token">
+
+type ApiReq<T> = Omit<T, "token">
+

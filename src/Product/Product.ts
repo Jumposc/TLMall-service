@@ -10,9 +10,9 @@ const router = express.Router();
 module.exports = router;
 
 /** 获取商品列表 */
-router.get("/list", async (req, res) => {
+router.post("/list", async (req, res) => {
     try {
-        res.json(ProductUitl.getProductList(req.body))
+        res.json( await ProductUitl.getProductList(req.body))
         res.end()
     }
     catch (e) {
@@ -35,9 +35,9 @@ router.get('/category/product', (req, res) => {
 })
 
 /** 获取一个商品 */
-router.get('/one', async (req, res) => {
+router.post('/one', async (req, res) => {
     try {
-        res.json(ProductUitl.getProduct(req.body))
+        res.json(await ProductUitl.getProduct(req.body))
         res.end()
     }
     catch (e) {
@@ -52,7 +52,7 @@ router.get('/one', async (req, res) => {
 /** 获取一组商品简单信息 */
 router.post('/simpleInfos', async (req, res) => {
     try {
-        res.json(ProductUitl.getSimpleInfos(req.body))
+        res.json(await ProductUitl.getSimpleInfos(req.body))
         res.end()
     }
     catch (e) {
@@ -65,9 +65,9 @@ router.post('/simpleInfos', async (req, res) => {
 })
 
 /** 获取商品评论列表 */
-router.get('/comment', async (req, res) => {
+router.post('/comment', async (req, res) => {
     try {
-        res.json(ProductUitl.getProductCommentList(req.body))
+        res.json(await ProductUitl.getProductCommentList(req.body))
         res.end()
     }
     catch (e) {
@@ -81,8 +81,9 @@ router.get('/comment', async (req, res) => {
 
 /** 添加一个商品 */
 router.post('/add', async (req, res) => {
+    try{
     try {
-        res.json(ProductUitl.addProduct(req.body))
+        res.json(await ProductUitl.addProduct(req.body))
         res.end()
     }
     catch (e) {
@@ -97,7 +98,7 @@ router.post('/add', async (req, res) => {
 /** 添加到收藏 */
 router.post('/collect', async (req, res) => {
     try {
-        res.json(ProductUitl.addProductCollect(req.body))
+        res.json(await ProductUitl.addProductCollect(req.body))
         res.end()
     }
     catch (e) {

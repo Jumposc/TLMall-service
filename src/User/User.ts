@@ -23,7 +23,7 @@ router.post('/register', async (req, res) => {
     let password = req.body.password as string;
     let user = await Database.db.collection('User').findOne({ username: username })
     if (user) {
-        res.json({ errMsg: "该用户已存在" })
+        res.json({ errMsg: "该用户已存在",isSucc:false })
         res.end();
     }
     else {
@@ -36,7 +36,7 @@ router.post('/register', async (req, res) => {
                 followedUids: []
             }
         )
-        res.json()
+        res.json({isSucc:true})
         res.end();
     }
 })

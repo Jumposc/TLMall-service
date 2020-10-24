@@ -7,4 +7,5 @@ export interface DbProduct {
     imageUrl: string,
     detail: ProductDetail,
     attribute: ProductAttributeData
+    inventory:number
 }
