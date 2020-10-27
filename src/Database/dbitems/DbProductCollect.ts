@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 
-export interface DbCollect{
-    _id:string,
+export interface DbProductCollect{
+    _id:ObjectId,
     uid:string,
     list:string[]
 }

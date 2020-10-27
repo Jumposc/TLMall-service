@@ -1,5 +1,7 @@
+import { ObjectId } from "mongodb";
+
 export interface DbUser{
-    _id: string,
+    _id: ObjectId,
     uid:string,
     fansNum: number,
     followedNum: number,

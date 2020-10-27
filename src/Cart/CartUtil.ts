@@ -1,26 +1,26 @@
-import { ResGetCartList } from "../../shared/Cart/ApiGetCartList";
+import { ObjectId } from "mongodb";
+import { ReqGetCartList, ResGetCartList } from "../../shared/Cart/ApiGetCartList";
 import { ReqSetCartList, ResSetCartList } from "../../shared/Cart/ApiSetCartList";
 import { ProductData } from "../../shared/Product/Product";
 import { Database } from "../Database/DataBase";
 import { DbCart } from "../Database/dbitems/DbCart";
 import { DbProduct } from "../Database/dbitems/dbProduct";
-let ObjectId = require('mongodb').ObjectId
 
 export class CartUtil {
 
-    static async getCartList(uid: string): Promise<ResGetCartList> {
-        let cart = await Database.db.collection<DbCart>('Cart').findOne({ uid: uid })
+    static async getCartList(req:ReqGetCartList): Promise<ResGetCartList> {
+        let cart = await Database.db.collection<DbCart>('Cart').findOne({ uid: req.token })
 
         if (!cart) {
             throw new Error('没有该用户购物车记录')
         }
-        let productIds = cart.products.map(v => v.id);
+        let productIds = cart.products.map(v => ObjectId.createFromHexString(v.id));
         let products: ProductData[] = (await Database.db.collection<DbProduct>('Product').find({ _id: { $in: productIds } })
             .toArray())
             .map(v => ({
                 ...v,
                 _id: undefined,
-                id: v._id
+                id: v._id.toHexString()
             }))
 
         let list = cart.products.map((v, i) => {
@@ -36,13 +36,16 @@ export class CartUtil {
         }
     }
 
-    static async setCartList(uid: string, cartItem: ReqSetCartList): Promise<ResSetCartList> {
-        await Database.db.collection<DbCart>('Cart').findOneAndUpdate({ uid: uid }, {
+    static async setCartList(req:ReqSetCartList): Promise<ResSetCartList> {
+        await Database.db.collection<DbCart>('Cart').findOneAndUpdate({ uid: req.token }, {
             $set: {
-                products: cartItem.products
+                products: req.products
+            },
+            $setOnInsert:{
+                uid:req.token
             }
         }, { upsert: true })
-        let cart = await this.getCartList(uid)
+        let cart = await this.getCartList({token:req.token})
         return {
             isSucc: true,
             list: cart.list

@@ -2,28 +2,20 @@ import { ReqGetDiscoverContentList, ResGetDiscoverContentList } from "../../shar
 import { ApiRes } from '../../shared/ApiRes/ApiRes'
 import { Database } from "../Database/DataBase";
 import { DbDiscover } from "../Database/dbitems/DbDiscover";
-let ObjectId = require('mongodb').ObjectId
+import { ObjectId } from "mongodb";
+
 
 export class DiscoverUtil {
     static async getContentList(req: ReqGetDiscoverContentList): Promise<ApiRes<ResGetDiscoverContentList>> {
-        if (req.lastId) {
-            let list = await Database.db.collection<DbDiscover>('Discover').find({ _id: { $gt: ObjectId(req.lastId) } })
-                .limit(req.pageSize)
-                .toArray()
-                .then(v => v.map(v => ({ ...v, _id: undefined, id: v._id })))
-            return {
-                list: list,
-                isSucc: true
-            }
-        } else {
-            let list = await Database.db.collection<DbDiscover>('Discover').find({})
-                .limit(req.pageSize)
-                .toArray()
-                .then(v => v.map(v => ({ ...v, _id: undefined, id: v._id })))
-            return {
-                list: list,
-                isSucc: true
-            }
+        let query = req.lastId === undefined ? {} : { _id: { $lt: new ObjectId(req.lastId) } }
+        let list = await Database.db.collection<DbDiscover>('Discover').find(query)
+            .limit(req.pageSize)
+            .sort({ sortField: 1, _id: -1 })
+            .toArray()
+            .then(v => v.map(v => ({ ...v, _id: undefined, id: v._id.toHexString() })))
+        return {
+            list: list,
+            isSucc: true
         }
     }
 } 

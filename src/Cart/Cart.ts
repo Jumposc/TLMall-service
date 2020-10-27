@@ -1,4 +1,5 @@
 import express = require('express');
+import { Api } from '../Api/Api';
 import { Database } from '../Database/DataBase';
 import { DbCart } from '../Database/dbitems/DbCart';
 import { CartUtil } from './CartUtil';
@@ -7,37 +8,7 @@ const router = express.Router();
 
 module.exports = router;
 /** 查询购物车列表 */
-router.post("/getCartList", async (req, res) => {
-    let uid = req.cookies.token as string;
-    try {
-        let items = await CartUtil.getCartList(uid);
-        res.json(items);
-        res.end();
-    }
-    catch (e) {
-        res.json({
-            isSucc: false,
-            errMsg: e.message
-        })
-    }
-
-})
+router.post("/getCartList", Api.handPostApi(CartUtil.getCartList))
 
 /** 覆盖设置购物车 */
-router.post("/set", async (req, res) => {
-    let uid = req.cookies.token as string;
-    let body = req.body
-    try {
-        let resSet = await CartUtil.setCartList(uid, body);
-        res.json(resSet)
-        res.end()
-    }
-    catch (e) {
-        console.error(e)
-        res.json({
-            isSucc: false,
-            errMsg: "添加失败"
-        })
-        res.end()
-    }
-})
+router.post("/set", Api.handPostApi(CartUtil.setCartList))

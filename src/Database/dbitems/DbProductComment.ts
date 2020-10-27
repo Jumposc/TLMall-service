@@ -1,6 +1,7 @@
+import { ObjectId } from "mongodb";
 
 export interface DbProductComment{
-    _id: string
+    _id: ObjectId
     productId:string,
     avatarUrl: string;
     nickName: string;

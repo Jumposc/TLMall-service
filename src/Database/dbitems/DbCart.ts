@@ -3,7 +3,7 @@ import { DbProduct } from "./dbProduct";
 import { DbUser } from "./DbUser";
 
 export interface DbCart{
-    _id: string
+    _id: ObjectId
     uid: string,
     products:{
         id:string,

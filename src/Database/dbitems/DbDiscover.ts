@@ -1,5 +1,7 @@
+import { ObjectId } from "mongodb";
+
 export interface DbDiscover {
-    _id: string,
+    _id: ObjectId,
     content: string,
     imageUrl: string,
     creator: {

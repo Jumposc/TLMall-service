@@ -2,7 +2,7 @@ import { ObjectId } from "mongodb";
 import { ProductDetail, ProductAttributeData } from "../../../shared/Product/Product";
 
 export interface DbProduct {
-    _id: string
+    _id: ObjectId
     name: string,
     imageUrl: string,
     detail: ProductDetail,

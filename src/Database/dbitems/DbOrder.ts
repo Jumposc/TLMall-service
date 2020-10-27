@@ -1,5 +1,7 @@
+import { ObjectId } from "mongodb";
+
 export interface DbOrder {
-    _id: string,
+    _id: ObjectId,
     uid: string,
     products: {
         id: string,

@@ -1,7 +1,9 @@
+import { ObjectId } from 'mongodb';
 import { ApiRes } from '../../shared/ApiRes/ApiRes'
 import { ReqAddOrder, ResAddOrder } from '../../shared/order/ApiAddOrder';
 import { ReqAddOrderComment, ResAddOrderComment } from '../../shared/order/ApiAddOrderComment';
 import { ReqCancelOrder, ResCancelOrder } from '../../shared/order/ApiCancelOrder';
+import { ReqConfirmOrder, ResConfirmOrder } from '../../shared/order/ApiConfirmOrder';
 import { ReqGetOrderList, ResGetOrderList } from '../../shared/order/ApiGetOrderList';
 import { ReqPayOrder, ResPayOrder } from '../../shared/order/ApiPayOrder';
 import { OrderItem } from '../../shared/order/Order';
@@ -11,7 +13,6 @@ import { DbOrder } from '../Database/dbitems/DbOrder';
 import { DbProductComment } from '../Database/dbitems/DbProductComment';
 import { DbUser } from '../Database/dbitems/DbUser';
 import { ProductUitl } from '../Product/ProductUtil';
-let ObjectId = require('mongodb').ObjectId
 
 export class OrderUtil {
     static async add(req: ReqAddOrder): Promise<ApiRes<ResAddOrder>> {
@@ -63,10 +64,10 @@ export class OrderUtil {
     }
 
     static async addComment(req: ReqAddOrderComment): Promise<ApiRes<ResAddOrderComment>> {
-        let order = await Database.db.collection<DbOrder>('Order').findOne({ _id: ObjectId(req.orderId) })
+        let order = await Database.db.collection<DbOrder>('Order').findOne({ _id: ObjectId.createFromHexString(req.orderId) })
         if (order && order.status === '待评价') {
             let productIds = order.products.map(v => v.id)
-            let user = await Database.db.collection<DbUser>('User').findOne({ _id: ObjectId(req.token) })
+            let user = await Database.db.collection<DbUser>('User').findOne({ _id: ObjectId.createFromHexString(req.token)})
             let comments: Omit<DbProductComment, "_id">[] = productIds.map(v => ({
                 productId: v,
                 avatarUrl: user!.avatar,
@@ -89,7 +90,14 @@ export class OrderUtil {
     }
 
     static async cancel(req: ReqCancelOrder): Promise<ApiRes<ResCancelOrder>> {
-        await Database.db.collection<DbOrder>('Order').findOneAndUpdate({ _id: ObjectId(req.orderId) }, { $set: { status: "交易关闭" } })
+        await Database.db.collection<DbOrder>('Order').findOneAndUpdate({ _id:ObjectId.createFromHexString(req.orderId)}, { $set: { status: "交易关闭" } })
+        return {
+            isSucc: true
+        }
+    }
+
+    static async confirm(req: ReqConfirmOrder): Promise<ApiRes<ResConfirmOrder>> {
+        await Database.db.collection<DbOrder>('Order').findOneAndUpdate({ _id:ObjectId.createFromHexString(req.orderId)}, { $set: { status: "待评价" } })
         return {
             isSucc: true
         }
@@ -99,35 +107,21 @@ export class OrderUtil {
         let orderList: OrderItem[] = (await this.getOrderListByStatus(req.status, req.token))
             .map(v => ({
                 ...v,
-                id: v._id,
+                id: v._id.toHexString(),
                 _id: undefined
             }))
-        if (req.lastId) {
-            let lastIndex = orderList.find((v) => v.id === req.lastId);
-            if (lastIndex === undefined) {
-                return {
-                    isSucc: true,
-                    list: orderList.slice(0, req.pageSize)
-                }
-            }
-            else {
-                return {
-                    isSucc: true,
-                    list: orderList.slice(lastIndex as any as number, req.pageSize)
-                }
-            }
-        }
-        else {
-            return {
-                isSucc: true,
-                list: orderList.slice(0, req.pageSize)
-            }
+        let lastIndex = req.lastId === undefined ? undefined:orderList.findIndex((v) => v.id === req.lastId);
+        let list = lastIndex === undefined ?  orderList.slice(0, req.pageSize):orderList.slice(lastIndex,req.pageSize)
+
+        return{
+            isSucc:true,
+            list:list
         }
     }
 
     static async getOrderListByStatus(status: ReqGetOrderList['status'], uid: string): Promise<DbOrder[]> {
         if (status === '全部') {
-            return await Database.db.collection<DbOrder>('Order').find({ uid: ObjectId(uid) })
+            return await Database.db.collection<DbOrder>('Order').find({ uid: uid})
                 .sort({ sortField: 1, _id: -1 })
                 .toArray()
         }
@@ -140,10 +134,10 @@ export class OrderUtil {
     }
 
     static async pay(req: ReqPayOrder): Promise<ApiRes<ResPayOrder>> {
-        let order = await Database.db.collection<DbOrder>('Order').findOne({ _id: ObjectId(req.orderId) })
+        let order = await Database.db.collection<DbOrder>('Order').findOne({ _id: ObjectId.createFromHexString(req.orderId) })
         if (order && order.status === '待付款') {
             //支付流程完成后
-            await Database.db.collection<DbOrder>('Order').findOneAndUpdate({ _id: ObjectId(req.orderId) }, { $set: { status: '待发货' } })
+            await Database.db.collection<DbOrder>('Order').findOneAndUpdate({ _id: ObjectId.createFromHexString(req.orderId) }, { $set: { status: '待发货' } })
             return {
                 isSucc: true
             }

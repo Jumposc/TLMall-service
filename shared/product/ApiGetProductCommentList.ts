@@ -3,7 +3,6 @@ import { ProductCommentItem, ProductData } from './Product';
 
 export interface ReqGetProductCommentList extends BaseReq{
     productId:string
-    page:number,
     pageSize:number,
     lastId?:string
 }
